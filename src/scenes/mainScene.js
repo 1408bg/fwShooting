@@ -179,7 +179,7 @@ function setupMainScene() {
   }
   
   function* moving() {
-    const fps = 60;
+    const fps = 30;
     const delay = new Duration({ milisecond: 1000 / fps });
     const moveSpeed = 5;
     const rotateSpeed = 5;
