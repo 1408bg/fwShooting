@@ -10,7 +10,7 @@ function setupMainScene() {
   let killCount = 0;
 
   const playerOrigin = GameObject.colored({
-    color: Color.fromHex('#000000'),
+    color: Color.fromHex('#FFFFFF'),
     size: new Size({ width: 50, height: 50 }),
     layer: 1
   });
@@ -30,7 +30,7 @@ function setupMainScene() {
   const player = playerPrefab.instantiate({ layer: 1 });
   player.transformOrigin = '50% 50%';
   player.rotate = 0;
-  player.color = Color.fromHex('#000000');
+  player.color = Color.fromHex('#FFFFFF');
   player.element.style.borderRadius = '50%';
   player.applyElement();
   let players = {};
