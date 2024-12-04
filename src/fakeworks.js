@@ -1022,6 +1022,16 @@ class ElementTheme {
     if (boxShadow) this.boxShadow = boxShadow;
     return this;
   }
+
+  copy() {
+    return new ElementTheme({
+      backgroundColor: this.backgroundColor,
+      textColor: this.textColor,
+      borderRadius: this.borderRadius,
+      padding: this.padding,
+      boxShadow: this.boxShadow
+    });
+  }
 }
 
 class ElementBuilder {
@@ -1040,6 +1050,15 @@ class ElementBuilder {
 
   constructor(tagName) {
     this.#element = document.createElement(tagName);
+    this.localTheme = false;
+  }
+
+  setLocalTheme(themeData) {
+    if (Validator.isNotClassType(themeData, ElementTheme)) {
+      throw FakeWorksError.autoType('themeData', 'ElementTheme');
+    }
+    this.localTheme = themeData;
+    return this;
   }
 
   setClass(...classNames) {
@@ -1086,6 +1105,14 @@ class ElementBuilder {
       'left': `${position.x}px`,
       'top': `${position.y}px`
     });
+  }
+
+  append(...children) {
+    if (Validator.isNotClassType(children, Array)) {
+      throw FakeWorksError.autoType('children', 'Array');
+    }
+    this.#element.append(...children);
+    return this;
   }
 
   onHover(handler) {
@@ -1136,13 +1163,36 @@ class ElementBuilder {
     return this;
   }
 
-  asButton() {
+  asRow({justifyContent = 'center', alignItems = 'center', gap = 0}) {
     this.setStyle({
-      backgroundColor: ElementBuilder.#themeData.backgroundColor,
-      color: ElementBuilder.#themeData.textColor,
-      borderRadius: ElementBuilder.#themeData.borderRadius,
-      padding: ElementBuilder.#themeData.padding,
-      boxShadow: ElementBuilder.#themeData.boxShadow,
+      display: "flex",
+      flexDirection: "row",
+      gap: gap,
+      justifyContent: justifyContent,
+      alignItems: alignItems
+    });
+    return this;
+  }
+
+  asColumn({justifyContent = 'center', alignItems = 'center', gap = 0}) {
+    this.setStyle({
+      display: "flex",
+      flexDirection: "column",
+      gap: gap,
+      justifyContent: justifyContent,
+      alignItems: alignItems
+    });
+    return this;
+  }
+  
+  asButton() {
+    const themeData = this.localTheme ? this.localTheme : ElementBuilder.#themeData;
+    this.setStyle({
+      backgroundColor: themeData.backgroundColor,
+      color: themeData.textColor,
+      borderRadius: themeData.borderRadius,
+      padding: themeData.padding,
+      boxShadow: themeData.boxShadow,
       border: "none",
       cursor: "pointer",
       display: "inline-block",
@@ -1152,12 +1202,13 @@ class ElementBuilder {
   }
 
   asCard() {
+    const themeData = this.localTheme ? this.localTheme : ElementBuilder.#themeData;
     this.setStyle({
-      backgroundColor: ElementBuilder.#themeData.backgroundColor,
-      color: ElementBuilder.#themeData.textColor,
-      borderRadius: ElementBuilder.#themeData.borderRadius,
-      padding: ElementBuilder.#themeData.padding,
-      boxShadow: ElementBuilder.#themeData.boxShadow,
+      backgroundColor: themeData.backgroundColor,
+      color: themeData.textColor,
+      borderRadius: themeData.borderRadius,
+      padding: themeData.padding,
+      boxShadow: themeData.boxShadow,
       display: "block"
     });
     return this;

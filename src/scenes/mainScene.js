@@ -235,7 +235,51 @@ function setupMainScene() {
     Input.addKeyUp('a');
     Input.addKeyUp('s');
     Input.addKeyUp('d');
+    Input.addKeyUp(' ');
+    killCount = 0;
     playerTails = new Map();
+
+    if (game.platform !== 'WEB') {
+      function buildKeyButton(key) {
+        return new ElementBuilder('button')
+        .setLocalTheme((()=>{
+          const themeData = ElementBuilder.themeData.copy();
+          themeData.padding = '12px 24px';
+          return themeData;
+        })())
+        .setText(key).setStyle({ margin: '0px' })
+        .onPressStart(()=>Input.addKeyDown(key))
+        .onPressEnd(()=>Input.addKeyUp(key))
+        .asButton().build()
+      }
+      const aKey = buildKeyButton('a');
+      const dKey = buildKeyButton('d');
+      const wKey = buildKeyButton('w');
+      const sKey = buildKeyButton('s');
+      const spaceKey = buildKeyButton(' ');
+      spaceKey.innerText = 'attack';
+      spaceKey.style.position = 'absolute';
+      spaceKey.style.left = `${game.width-140}px`;
+      spaceKey.style.top = `${game.height-70}px`;
+
+      const buttonContainer = new ElementBuilder('div')
+      .setStyle({ marginLeft: '0px', zIndex: '5' })
+      .asColumn({}).setSize(new Size({ width: 200, height: 100 }))
+      .setPosition(new Vector({ x: 240, y: game.height-100 }))
+      .append(
+        wKey,
+        new ElementBuilder('div')
+        .asRow({}).append(
+          aKey,
+          sKey,
+          dKey
+        ).build()
+      ).build();
+
+      main.addElement({ element: buttonContainer });
+      main.addElement({ element: spaceKey });
+    }
+
     socket = io();
     socket.on('currentPlayers', (serverPlayers) => {
       players = serverPlayers;
