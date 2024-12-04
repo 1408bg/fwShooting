@@ -1101,7 +1101,7 @@ class ElementBuilder {
       throw FakeWorksError.autoType('position', 'Vector');
     }
     return this.setStyle({
-      'position': 'relative',
+      'position': 'absolute',
       'left': `${position.x}px`,
       'top': `${position.y}px`
     });
@@ -1112,6 +1112,13 @@ class ElementBuilder {
       throw FakeWorksError.autoType('children', 'Array');
     }
     this.#element.append(...children);
+    return this;
+  }
+
+  generateChildren(length, builder) {
+    for (let i = 0; i < length; i++) {
+      this.#element.appendChild(builder(i, this.localTheme ? this.localTheme.copy() : ElementBuilder.#themeData.copy()));
+    }
     return this;
   }
 
@@ -1802,6 +1809,7 @@ class Game {
     this.size = Size.fitOf(root);
     this.width = this.size.width;
     this.height = this.size.height;
+    if (this.platform !== 'WEB') this.height -= 50;
     this.#scenes = new Map();
   }
 

@@ -3,6 +3,7 @@ function setupMainScene() {
   const main = game.createScene('main');
   const bangSound = new Audio('/assets/bang.mp3');
   let socket;
+  const elements = [];
   
   let clientId = -1;
   let recentDirection = new Vector({ x: 1, y: 0 });
@@ -40,12 +41,12 @@ function setupMainScene() {
   
   const shootText = new TextUI({
     text: '쏠 수 있는',
-    position: new Vector({ x: 100, y: game.height-50 })
+    position: new Vector({ x: 80, y: game.height-120 })
   });
   
   const killText = new TextUI({
     text: '0명 죽인',
-    position: new Vector({ x: 100, y: game.height-70})
+    position: new Vector({ x: 80, y: game.height-140})
   });
   
   function createPlayer() {
@@ -259,13 +260,13 @@ function setupMainScene() {
       const spaceKey = buildKeyButton(' ');
       spaceKey.innerText = 'attack';
       spaceKey.style.position = 'absolute';
-      spaceKey.style.left = `${game.width-140}px`;
+      spaceKey.style.left = `${game.width-100}px`;
       spaceKey.style.top = `${game.height-70}px`;
-
+      
       const buttonContainer = new ElementBuilder('div')
       .setStyle({ marginLeft: '0px', zIndex: '5' })
       .asColumn({}).setSize(new Size({ width: 200, height: 100 }))
-      .setPosition(new Vector({ x: 240, y: game.height-100 }))
+      .setPosition(new Vector({ x: 20, y: game.height-100 }))
       .append(
         wKey,
         new ElementBuilder('div')
@@ -276,6 +277,8 @@ function setupMainScene() {
         ).build()
       ).build();
 
+      elements.push(aKey, dKey, wKey, sKey, spaceKey, buttonContainer);
+      
       main.addElement({ element: buttonContainer });
       main.addElement({ element: spaceKey });
     }
@@ -356,6 +359,9 @@ function setupMainScene() {
     playerTails.forEach((tail) => {
       const tails = tail.tail;
       while (tails.length) main.removeObject(tails.shift().object);
+    });
+    elements.forEach((e) => {
+      e.remove();
     });
     playerObjects.forEach((object) => main.removeObject(object));
     stopCoroutine(moving);
